@@ -1,9 +1,12 @@
 package com.quickwin.demoproject.services.impl;
 
 import com.quickwin.demoproject.entities.Contact;
+import com.quickwin.demoproject.entities.Entreprise;
 import com.quickwin.demoproject.errors.ResourceNotFoundException;
 import com.quickwin.demoproject.repositories.IContactRepo;
+import com.quickwin.demoproject.repositories.IEntrepriseRepo;
 import com.quickwin.demoproject.services.IContactService;
+import com.quickwin.demoproject.services.IEntrepriseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,57 +16,55 @@ import java.util.Optional;
 
 @Service
 @Transactional
-public class ContactServiceImpl implements IContactService {
+public class EntrepriseServiceImpl implements IEntrepriseService {
 
     @Autowired
-    private IContactRepo contactRepo;
+    private IEntrepriseRepo entrepriseRepo;
 
     @Override
-    public Contact createContact(Contact contact) {
-        return contactRepo.save(contact);
+    public Entreprise createEntreprise(Entreprise entreprise) {
+        return entrepriseRepo.save(entreprise);
     }
 
     @Override
-    public Contact updateContact(Contact contact) {
-        Optional< Contact > contactDb = this.contactRepo.findById(contact.getId());
+    public Entreprise updateEntreprise(Entreprise entreprise) {
+        Optional< Entreprise > entrepriseDb = this.entrepriseRepo.findById(entreprise.getId());
 
-        if (contactDb.isPresent()) {
-            Contact contactUpdate = contactDb.get();
-            contactUpdate.setId(contact.getId());
-            contactUpdate.setName(contact.getName());
-            contactUpdate.setFirstname(contact.getFirstname());
-            contactUpdate.setAddress(contact.getAddress());
-            contactUpdate.setRelationType(contact.getRelationType());
-            contactUpdate.setNumeroTva(contact.getNumeroTva());
-            contactUpdate.setEntreprises(contact.getEntreprises());
-            return contactUpdate;
+        if (entrepriseDb.isPresent()) {
+
+            Entreprise entrepriseUpdate = entrepriseDb.get();
+            entrepriseUpdate.setId(entreprise.getId());
+            entrepriseUpdate.setAddress(entreprise.getAddress());
+            entrepriseUpdate.setNumeroTva(entreprise.getNumeroTva());
+            entrepriseUpdate.setContacts(entreprise.getContacts());
+            return entrepriseUpdate;
         } else {
-            throw new ResourceNotFoundException("Record not found with id : " + contact.getId());
+            throw new ResourceNotFoundException("Record not found with id : " + entreprise.getId());
         }
     }
 
     @Override
-    public List<Contact> getAllContact() {
-        return this.contactRepo.findAll();
+    public List<Entreprise> getAllEntreprise() {
+        return this.entrepriseRepo.findAll();
     }
 
     @Override
-    public Contact getContactById(long contactId) {
-        Optional < Contact > contactDb = this.contactRepo.findById(contactId);
+    public Entreprise getEntrepriseById(long entrepriseId) {
+        Optional < Entreprise > entrepriseDb = this.entrepriseRepo.findById(entrepriseId);
 
-        if (contactDb.isPresent()) {
-            return contactDb.get();
+        if (entrepriseDb.isPresent()) {
+            return entrepriseDb.get();
         } else {
-            throw new ResourceNotFoundException("Record not found with id : " + contactId);
+            throw new ResourceNotFoundException("Record not found with id : " + entrepriseId);
         }
     }
 
     @Override
-    public void deleteContact(long id) {
-        Optional < Contact > contactDb = this.contactRepo.findById(id);
+    public void deleteEntreprise(long id) {
+        Optional < Entreprise > entrepriseDb = this.entrepriseRepo.findById(id);
 
-        if (contactDb.isPresent()) {
-            this.contactRepo.delete(contactDb.get());
+        if (entrepriseDb.isPresent()) {
+            this.entrepriseRepo.delete(entrepriseDb.get());
         } else {
             throw new ResourceNotFoundException("Record not found with id : " + id);
         }

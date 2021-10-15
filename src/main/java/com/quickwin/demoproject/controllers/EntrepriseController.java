@@ -4,6 +4,8 @@ import com.quickwin.demoproject.entities.Contact;
 import com.quickwin.demoproject.entities.Entreprise;
 import com.quickwin.demoproject.repositories.IContactRepo;
 import com.quickwin.demoproject.repositories.IEntrepriseRepo;
+import com.quickwin.demoproject.services.IContactService;
+import com.quickwin.demoproject.services.IEntrepriseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,86 +19,33 @@ import java.util.Optional;
 public class EntrepriseController {
 
     @Autowired
-    IEntrepriseRepo entrepriseRepo;
-
-    @Autowired
-    IContactRepo contactRepo;
+    private IEntrepriseService entrepriseService;
 
     @GetMapping("/entreprises")
     public ResponseEntity<List<Entreprise>> getAllEntreprises() {
-        try {
-            List<Entreprise> list = entrepriseRepo.findAll();
-
-            if (list.isEmpty() || list.size() == 0) {
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-            }
-            return new ResponseEntity<>(list, HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        return ResponseEntity.ok().body(entrepriseService.getAllEntreprise());
     }
 
     @GetMapping("/entreprises/{id}")
     public ResponseEntity<Entreprise> getEntreprise(@PathVariable Long id) {
-        Optional<Entreprise> entreprise = entrepriseRepo.findById(id);
-
-        if (entreprise.isPresent()) {
-            return new ResponseEntity<>(entreprise.get(), HttpStatus.OK);
-        }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return ResponseEntity.ok().body(entrepriseService.getEntrepriseById(id));
     }
 
     @PostMapping("/entreprises")
     public ResponseEntity<Entreprise> saveEntreprise(@RequestBody Entreprise entreprise) {
-        try {
-            return new ResponseEntity<>(entrepriseRepo.save(entreprise), HttpStatus.CREATED);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    @PostMapping("/entreprises/{entrepriseId}/{contactId}")
-    public ResponseEntity<Entreprise> saveEntreprise(Long entrepriseId, Long contactId) {
-        try {
-            Optional<Entreprise> entreprise = entrepriseRepo.findById(entrepriseId);
-            if(entreprise.isPresent()){
-                Entreprise ent = entreprise.get();
-                Optional<Contact> contact = contactRepo.findById(contactId);
-                if(contact.isPresent()){
-                    Contact c = contact.get();
-                    ent.getContacts().add(c);
-                }
-                return new ResponseEntity<>(entrepriseRepo.save(ent), HttpStatus.CREATED);
-            }
-            else{
-                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        return ResponseEntity.ok().body(this.entrepriseService.createEntreprise(entreprise));
     }
 
     @PutMapping("/entreprises")
-    public ResponseEntity<Entreprise> updateEntreprise(@RequestBody Entreprise entreprise) {
-        try {
-            return new ResponseEntity<>(entrepriseRepo.save(entreprise), HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public ResponseEntity<Entreprise> updateEntreprise(@PathVariable long id, @RequestBody Entreprise entreprise) {
+        entreprise.setId(id);
+        return ResponseEntity.ok().body(this.entrepriseService.updateEntreprise(entreprise));
     }
 
     @DeleteMapping("/entreprises/{id}")
-    public ResponseEntity<HttpStatus> deleteEntreprise(@PathVariable Long id) {
-        try {
-            Optional<Entreprise> entreprise = entrepriseRepo.findById(id);
-            if (entreprise.isPresent()) {
-                entrepriseRepo.delete(entreprise.get());
-            }
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public HttpStatus deleteEntreprise(@PathVariable Long id) {
+        this.entrepriseService.deleteEntreprise(id);
+        return HttpStatus.OK;
     }
 
 }

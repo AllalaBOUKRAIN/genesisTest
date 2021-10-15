@@ -1,18 +1,19 @@
 package com.quickwin.demoproject.services;
 
 import com.quickwin.demoproject.entities.Contact;
+import com.quickwin.demoproject.entities.Entreprise;
 
 import java.util.List;
 
-public interface IContactService {
+public interface IEntrepriseService {
 
-    Contact createContact(Contact contact);
+    Entreprise createEntreprise(Entreprise entreprise);
 
-    Contact updateContact(Contact contact);
+    Entreprise updateEntreprise(Entreprise entreprise);
 
-    List< Contact > getAllContact();
+    List< Entreprise > getAllEntreprise();
 
-    Contact getContactById(long contactId);
+    Entreprise getEntrepriseById(long entrepriseId);
 
-    void deleteContact(long id);
+    void deleteEntreprise(long id);
 }
